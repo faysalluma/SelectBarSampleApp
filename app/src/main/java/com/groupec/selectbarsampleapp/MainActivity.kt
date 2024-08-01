@@ -4,10 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.groupec.selectbarsampleapp.ui.theme.SelectBarSampleAppTheme
@@ -31,7 +34,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    AutoCompleteSelectBar(entries = getWords())
+    Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
+        AutoCompleteSelectBar(entries = getWords())
+        AppExposedDropdownMenu(items = getWords())
+        AppEditableExposedDropdown(items = getWords())
+        AppMultiSelectDropdownMenu(items = getWords())
+    }
 }
 
 @Preview(showBackground = true)
@@ -64,3 +72,4 @@ fun getWords() = listOf(
     "fail",
     "jail"
 )
+
