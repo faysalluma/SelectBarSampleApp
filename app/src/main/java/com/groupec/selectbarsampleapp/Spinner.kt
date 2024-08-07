@@ -1,5 +1,7 @@
 package com.groupec.selectbarsampleapp
 
+import android.content.Context
+import android.content.res.Resources
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -49,12 +51,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -336,6 +341,9 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
     var isExpanded by remember { mutableStateOf(false) }
     val selectedItems= remember { mutableStateListOf<String>() }
 
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    var textFieldWidth by remember { mutableStateOf(screenWidth) }
+
     ExposedDropdownMenuBox(
         expanded = isExpanded,
         onExpandedChange = { isExpanded = it }
@@ -352,7 +360,13 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             // colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            modifier = Modifier.menuAnchor(), // Needed to anchor the dropdown menu
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .onGloballyPositioned { coordinates ->
+                    // Convert size from pixels to dp
+                    textFieldWidth = coordinates.size.width.pixelToDp().dp
+                }.widthIn(max = textFieldWidth)
+            ,
             colors = ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White
@@ -370,6 +384,7 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
                     label = "Animate the selected item"
                 ) { isSelected ->
                     if (isSelected) {
+
                         DropdownMenuItem(
                             text = {
                                 Text(text = item)
@@ -399,6 +414,10 @@ fun AppMultiSelectDropdownMenu(items: List<String>) {
         }
     }
 }
+
+
+fun Int.pixelToDp(): Int = (this / Resources.getSystem().displayMetrics.density).toInt()
+
 
 @Preview(showBackground = true)
 @Composable
